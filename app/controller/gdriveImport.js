@@ -17,28 +17,42 @@ var clientId = credentials.client_id
 var redirectUrl = credentials.redirect_uris[0]
 
 function updateSourceFiles(token) {
-  if (!token) {
-    // will need firebase function like getSavedToken(source), reading from json file temporarily
-    fs.readFile('app/controller/driveToken.json', function processClientSecrets(err, content) {
-      if (err) {
-        // This would be if unable to retrieve from firebase, n/a
-        console.log('Error loading client secret file: ' + err)
-        return
-      }
-      authorize(JSON.parse(content), importFiles)
-    })
-  } else {
-    authorize(token, importFiles)
-  }
+  return new Promise(function(resolve, reject) {
+    if (!token) {
+      // will need firebase function like getSavedToken(source), reading from json file temporarily
+      fs.readFile('app/controller/driveToken.json', function processClientSecrets(err, content) {
+        if (err) {
+          // This would be if unable to retrieve from firebase, n/a
+          console.log('Error loading client secret file: ' + err)
+          return
+        }
+        authorize(JSON.parse(content))
+        .then(auth => importFiles(auth))
+        .then(files => {
+          resolve(files)
+        })
+      })
+    } else {
+      authorize(token)
+      .then(importFiles)
+      .then(files => {
+        resolve(files)
+      })
+    }
+  })
+}
 
-  function authorize(token, callback) {
+function authorize(token) {
+  return new Promise(function(resolve, reject) {
     var auth = new GoogleAuth()
     var oauth2Client = new auth.OAuth2(clientId, clientSecret, redirectUrl)
     oauth2Client.credentials = token
-    callback(oauth2Client)
-  }
+    resolve(oauth2Client)
+  })
+}
 
-  function importFiles(auth) {
+function importFiles(auth) {
+  return new Promise(function(resolve, reject) {
     var service = google.drive('v3')
     service.files.list({
       auth: auth,
@@ -47,7 +61,7 @@ function updateSourceFiles(token) {
       if (err) {
         console.log('The API returned an error: ' + err)
         // needs some error trap here for failed access
-        return
+        reject(err)
       }
       var files = response.files
       if (files.length === 0) {
@@ -60,9 +74,10 @@ function updateSourceFiles(token) {
           console.log('Imported file: ', file)
         }
       }
-      return (files.length + ' Google Drive files imported')
+      // return (files.length + ' Google Drive files imported')
+      resolve(files)
     })
-  }
+  })
 }
 
 function getCode() {

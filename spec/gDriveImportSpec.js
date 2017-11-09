@@ -11,8 +11,17 @@ describe('Google Drive Importer', function() {
   it('gets new token', function(done) {
     readToken()
     .then(content => {
-      console.log(123, content)
       done(content)
+    }).catch(e => {
+      console.log(e)
+    })
+  })
+
+  it('Retrieve files', function(done) {
+    importer.updateSourceFiles()
+    .then(files => {
+      expect(files.length).toEqual(3)
+      done()
     }).catch(e => {
       console.log(e)
     })

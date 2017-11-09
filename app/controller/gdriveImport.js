@@ -64,17 +64,6 @@ function importFiles(auth) {
         reject(err)
       }
       var files = response.files
-      if (files.length === 0) {
-        console.log('No files found.')
-      } else {
-        console.log('Importing Google Drive files ...')
-        for (var i = 0; i < files.length; i++) {
-          var file = files[i]
-          // here would be a function like createAndUpdateCards(file)
-          console.log('Imported file: ', file)
-        }
-      }
-      // return (files.length + ' Google Drive files imported')
       resolve(files)
     })
   })

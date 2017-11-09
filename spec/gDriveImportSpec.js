@@ -8,15 +8,6 @@ describe('Google Drive Importer', function() {
     expect(code).toEqual('https://accounts.google.com/o/oauth2/auth?')
   })
 
-  it('gets new token', function(done) {
-    readToken()
-    .then(content => {
-      done(content)
-    }).catch(e => {
-      console.log(e)
-    })
-  })
-
   it('Retrieve files', function(done) {
     importer.updateSourceFiles()
     .then(files => {

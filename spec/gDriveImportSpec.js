@@ -9,10 +9,12 @@ describe('Google Drive Importer', function() {
   })
 
   it('gets new token', function(done) {
-    var content = readToken(function(err, content){
-      done()
+    readToken()
+    .then(content => {
+      console.log(123, content)
+      done(content)
+    }).catch(e => {
+      console.log(e)
     })
-
   })
-
 })

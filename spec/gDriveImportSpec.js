@@ -1,20 +1,19 @@
 var fs = require('fs')
-var importer = require('../app/controller/gdriveImport.js')
+var importer = require('../app/extract/googleDrive.js');
 
-describe('Google Drive Importer', function() {
-
-  it('get new code', function() {
-    var url = importer.getCode().substring(0, 42)
-    expect(url).toEqual('https://accounts.google.com/o/oauth2/auth?')
-  })
+describe('File List', function() {
 
   it('Retrieve files', function(done) {
-    importer.updateSourceFiles()
-    .then(files => {
-      expect(files.length).toEqual(3)
-      done()
-    }).catch(e => {
-      console.log(e)
+    readGoogleToken()
+    .then(token => {
+      importer.getFileList(token)
+      .then(files => {
+        console.log(files)
+        expect(files.length).toEqual(3)
+        done()
+      }).catch(e => {
+        console.log(e)
+      })
     })
   })
 })

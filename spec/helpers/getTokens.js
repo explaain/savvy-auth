@@ -1,15 +1,16 @@
 var fs = require('fs')
 
-readToken = function() {
+readGoogleToken = function() {
   return new Promise(function(resolve, reject) {
-    fs.readFile('app/controller/driveToken.json', function processClientSecrets(err, content) {
+    fs.readFile('spec/tempCredentials/driveToken.json', function processClientSecrets(err, content) {
       if (err) {
         console.log(err)
         reject(err)
       } else {
-        console.log(JSON.parse(content))
         resolve(JSON.parse(content))
       }
     })
   });
 }
+
+exports.readGoogleToken = readGoogleToken

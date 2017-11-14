@@ -1,22 +1,28 @@
-import googleDrive from './googleDrive.js'
-import confluence from './confluence.js'
+var googleDrive = require('./googleDrive.js')
+var confluence = require('./confluence.js')
 
 const Extract = {
   getFiles(platform, token, queryData) {
-    // @TODO
-
-    var promise
-    switch (platform) {
-      case 'googleDrive':
-        promise = googleDrive.getFiles()
-        break
-      case 'confluence':
-        promise = confluence.getFiles()
-        break
-      default:
-    }
-    return promise
+    return new Promise(function(resolve, reject) {
+      if (platform === 'confluence') {
+        confluence.getFiles(token)
+        .then(files => {
+          resolve(files)
+        }).catch(e => {
+          reject(e)
+        })
+      } else if (platform === 'googleDrive') {
+        googleDrive.getFiles(token)
+        .then(files => {
+          resolve(files)
+        }).catch(e => {
+          reject(e)
+        })
+      } else {
+        reject(new Error('platform missing'))
+      }
+    })
   }
 }
 
-export default Extract
+module.exports = Extract

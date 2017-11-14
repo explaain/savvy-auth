@@ -1,32 +1,13 @@
 var express = require('express')
 var router = express.Router()
-var gdriveImporter = require('../auth/googleDriveToken')
-var confluenceImporter = require('../auth/confluenceImport')
+var importer = require('../extract/extract')
+var app = express()
 
-router.get('/update', function(req, res) {
-  gdriveImporter.updateSourceFiles()
-  confluenceImporter.updateSourceFiles()
-  res.redirect('/')
-})
-
-router.get('/add-gdrive', function(req, res) {
-  res.redirect(gdriveImporter.getCode())
-})
-
-router.get('/gdrive-token', function(req, res) {
-  gdriveImporter.exchangeToken(req.query.code)
-  res.redirect('/')
-})
+app.set('view engine', 'html')
 
 router.get('/add-confluence', function(req, res) {
-  res.render('add-confluence.html', { title: 'Express' })
-})
-
-router.get('/save-confluence', function(req, res) {
-  console.log(req.query)
-  confluenceImporter.saveConfluenceDetails(req.query)
-  confluenceImporter.updateSourceFiles()
-  res.redirect('/')
+  console.log('x')
+  res.sendFile(root + '/views/add-confluence.html')
 })
 
 module.exports = router

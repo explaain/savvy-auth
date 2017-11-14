@@ -1,4 +1,3 @@
-var fs = require('fs')
 var importer = require('../app/extract/googleDrive.js');
 
 describe('Files from Google Drive', function() {

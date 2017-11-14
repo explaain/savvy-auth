@@ -1,13 +1,14 @@
 var request = require('superagent')
 
 const Extract = {
-  getFiles(token, space) {
+  getFiles(token) {
     return new Promise(function(resolve, reject) {
-      getSiteContent(token, space)
+      getSiteContent(token)
       .then(data => {
         var files = data.body.results.map(file => file.body.storage.value)
         return files
       }).then(fileContents => {
+        console.log(fileContents)
         resolve(fileContents)
       }).catch(e => {
         console.log(e)

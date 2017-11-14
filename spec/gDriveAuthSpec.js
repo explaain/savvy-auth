@@ -1,4 +1,3 @@
-var fs = require('fs')
 var auth = require('../app/auth/googleDriveToken.js')
 
 describe('Google Drive Token Retrieve', function() {

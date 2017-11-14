@@ -6,7 +6,7 @@ describe('File List', function() {
   it('Retrieve files', function(done) {
     readGoogleToken()
     .then(token => {
-      importer.getFileList(token)
+      importer.getFiles(token)
       .then(files => {
         console.log(files)
         expect(files.length).toEqual(3)

@@ -1,4 +1,4 @@
-import Jasmine from 'jasmine';
+const Jasmine = require('jasmine')
 
 let jasmine = new Jasmine();
 // modify this line to point to your jasmine.json

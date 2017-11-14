@@ -1,7 +1,7 @@
 var express = require('express')
 var router = express.Router()
-var gdriveImporter = require('../controller/gdriveImport')
-var confluenceImporter = require('../controller/confluenceImport')
+var gdriveImporter = require('../auth/googleDriveToken')
+var confluenceImporter = require('../auth/confluenceImport')
 
 router.get('/update', function(req, res) {
   gdriveImporter.updateSourceFiles()

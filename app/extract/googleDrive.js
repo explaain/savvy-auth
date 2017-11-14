@@ -7,28 +7,41 @@ var clientId = '704974264220-r3j760e70qgsea3r143apoc4o6nt5ha2.apps.googleusercon
 var redirectUrl = ['http://localhost:3000/authorisations/gdrive-token']
 
 const Extract = {
+  getFiles(token) {
+    const self = this
+    return new Promise(function(resolve, reject) {
+      self.getFileList(token)
+      .then(files => {
+        console.log(files.map(file => file.name))
+        const promises = files.map(file => self.getFileContents(file.id))
+        return Promise.all(promises)
+      }).then(fileContentses => {
+        console.log(fileContentses)
+        resolve(fileContentses)
+      }).catch(e => {
+        console.log(e)
+        reject(e)
+      })
+    })
+  },
   getFileList(token) {
-    var fileList = getSourceFiles(token)
-    this.getFileNames(fileList)
-  },
-  getFileNames(fileList) {
-    fileList.forEach(function(file) {
-      this.getFileContents(file)
+    return new Promise(function(resolve, reject) {
+      authorize(token)
+      .then(importFiles)
+      .then(files => {
+        resolve(files)
+      }).catch(e => {
+        console.log(e)
+        reject(e)
+      })
     })
   },
-  getFileContents(file) { // Singular file
-    console.log(file.name)
+  getFileContents(fileID) { // Singular file
+    return new Promise(function(resolve, reject) {
+      console.log(fileID)
+      resolve('abc ' + fileID)
+    })
   }
-}
-
-function getSourceFiles(token) {
-  return new Promise(function(resolve, reject) {
-    authorize(token)
-    .then(importFiles)
-    .then(files => {
-      resolve(files)
-    })
-  })
 }
 
 function authorize(token) {

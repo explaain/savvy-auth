@@ -7,5 +7,5 @@ describe('Google Drive Token Retrieve', function() {
     var url = auth.getCode().substring(0, 42)
     expect(url).toEqual('https://accounts.google.com/o/oauth2/auth?')
   })
-  
+
 })

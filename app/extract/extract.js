@@ -15,7 +15,7 @@ const Extract = {
         break
       default:
     }
-    promise.then()
+    return promise
   }
 }
 

@@ -8,15 +8,18 @@ var redirectUrl = ['http://localhost:3000/authorisations/gdrive-token']
 
 const Extract = {
   getFiles(token) {
-    const self = this
     return new Promise(function(resolve, reject) {
-      self.getFileList(token)
-      .then(files => {
-        console.log(files.map(file => file.name))
-        const promises = files.map(file => self.getFileContents(file.id))
+      var auth
+      authorize(token)
+      .then(authClient => {
+        auth = authClient
+        return getFileList(auth)
+      }).then(files => {
+        // saveFileToFirebase('googleDrive', file.id, file.name)
+        const promises = files.filter(file => file.mimeType === 'application/vnd.google-apps.document')
+        .map(file => getFileContents(auth, file))
         return Promise.all(promises)
       }).then(fileContentses => {
-        console.log(fileContentses)
         resolve(fileContentses)
       }).catch(e => {
         console.log(e)
@@ -24,24 +27,6 @@ const Extract = {
       })
     })
   },
-  getFileList(token) {
-    return new Promise(function(resolve, reject) {
-      authorize(token)
-      .then(importFiles)
-      .then(files => {
-        resolve(files)
-      }).catch(e => {
-        console.log(e)
-        reject(e)
-      })
-    })
-  },
-  getFileContents(fileID) { // Singular file
-    return new Promise(function(resolve, reject) {
-      console.log(fileID)
-      resolve('abc ' + fileID)
-    })
-  }
 }
 
 function authorize(token) {
@@ -53,12 +38,12 @@ function authorize(token) {
   })
 }
 
-function importFiles(auth) {
+function getFileList(auth) {
   return new Promise(function(resolve, reject) {
     var service = google.drive('v3')
     service.files.list({
       auth: auth,
-      fields: 'nextPageToken, files(id, name)'
+      fields: 'nextPageToken, files(id, name, mimeType)'
     }, function(err, response) {
       if (err) {
         console.log('The API returned an error: ' + err)
@@ -71,6 +56,23 @@ function importFiles(auth) {
   })
 }
 
-// function getEachFile(fileList)
+function getFileContents(auth, file) {
+  return new Promise(function(resolve, reject) {
+    var service = google.drive('v3')
+    service.files.export({
+      auth: auth,
+      fileId: file.id,
+      mimeType: 'text/plain'
+    }, function(err, response) {
+      if (err) {
+        console.log('The API returned an error: ' + err)
+        // needs some error trap here for failed access
+        reject(err)
+      }
+      var content = response
+      resolve(content)
+    })
+  })
+}
 
 module.exports = Extract

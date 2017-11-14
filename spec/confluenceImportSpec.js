@@ -1,17 +1,17 @@
 var fs = require('fs')
-var importer = require('../app/extract/googleDrive.js');
+var importer = require('../app/extract/confluence.js');
 
-describe('Files from Google Drive', function() {
+describe('Files from Confluence', function() {
 
   it('Retrieve file contents', function(done) {
-    readGoogleToken()
+    readConfluenceToken()
     .then(token => {
       return importer.getFiles(token)
     }).then(files => {
-      expect(files.length).toEqual(2)
+      expect(files.length).toEqual(1)
       done()
     }).catch(e => {
-      console.log(e)
+      console.log('Err: ' + e)
     })
   })
 })

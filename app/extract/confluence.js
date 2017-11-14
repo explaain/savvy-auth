@@ -1,12 +1,14 @@
 var request = require('superagent')
 
 const Extract = {
-  getFiles(token) {
+  getFiles(token, space) {
     return new Promise(function(resolve, reject) {
-      getSiteContent(token, 'savvyfolder')
+      getSiteContent(token, space)
       .then(data => {
-        var files = data.body.results
-        resolve(files)
+        var files = data.body.results.map(file => file.body.storage.value)
+        return files
+      }).then(fileContents => {
+        resolve(fileContents)
       }).catch(e => {
         console.log(e)
         reject(e)
@@ -15,10 +17,10 @@ const Extract = {
   }
 }
 
-function getSiteContent(token, space) {
+function getSiteContent(token) {
   return new Promise(function(resolve, reject) {
     request
-    .get(token.baseUrl + '/wiki/rest/api/content')
+    .get(token.baseUrl + '/wiki/rest/api/content?expand=body.storage')
     .auth(token.username, token.password)
     .then(data => {
       resolve(data)
@@ -28,4 +30,5 @@ function getSiteContent(token, space) {
     })
   })
 }
+
 module.exports = Extract

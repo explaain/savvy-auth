@@ -8,7 +8,8 @@ describe('Files from Confluence', function() {
     .then(token => {
       return importer.getFiles(token)
     }).then(files => {
-      expect(files.length).toEqual(1)
+      console.log(files[1])
+      expect(files.length).toEqual(5)
       done()
     }).catch(e => {
       console.log('Err: ' + e)

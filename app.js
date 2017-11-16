@@ -49,7 +49,10 @@ app.post('/save/confluence', function(req, res) {
 })
 
 app.get('/add/google-drive', function(req, res) {
-  req.session.origin = req.query.orgId
+  req.session.userID = req.query.userID
+  req.session.accessToken = req.query.accessToken
+  req.session.organisationID = req.query.organisationID
+  req.session.redirectURL = req.query.redirectURL
   res.redirect(googleDriveToken.getCode())
 })
 

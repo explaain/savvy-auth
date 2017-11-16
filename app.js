@@ -56,7 +56,7 @@ app.get('/save/google-drive', function(req, res) {
   var code = req.query.code
   googleDriveToken.exchangeToken(code)
   .then(token => {
-    // save token to firebase
+    // save JSON.parse(token) to firebase
     importer.getFiles('googleDrive', JSON.parse(token))
     .then(files => {
       cardParser.parseCards(files)

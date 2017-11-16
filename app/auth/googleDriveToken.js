@@ -1,10 +1,13 @@
 var GoogleAuth = require('google-auth-library')
 var fs = require('fs')
+var dotenv = require('dotenv')
+
+dotenv.load()
 
 // needs firebase function like getCredentials() or environment variables
-var clientSecret = 'lGE5esfXpdB6y7KkVNUezfas'
-var clientId = '704974264220-r3j760e70qgsea3r143apoc4o6nt5ha2.apps.googleusercontent.com'
-var redirectUrl = ['http://localhost:3000/authorisations/gdrive-token']
+var clientSecret = process.env.G_CLIENT_SECRET
+var clientId = process.env.G_CLIENT_ID
+var redirectUrl = process.env.G_REDIRECT_URL
 
 function getCode() {
   var auth = new GoogleAuth()
@@ -27,12 +30,11 @@ function exchangeToken(code) {
       }
       oauth2Client.credentials = token
       // needs firebase function like saveToken(source, token), saving to local json temporarily
-      fs.writeFile('app/tempCredentials/driveToken.json', JSON.stringify(token), function(err) {
+      fs.writeFile('spec/tempCredentials/driveToken.json', JSON.stringify(token), function(err) {
         if (err) {
           console.log('Failed to write file')
         }
-        console.log('Token stored to firebase:' + token.token_type)
-        resolve(token)
+        resolve(JSON.stringify(token))
       })
     })
   })

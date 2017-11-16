@@ -1,10 +1,14 @@
 var google = require('googleapis')
 var GoogleAuth = require('google-auth-library')
 
+var dotenv = require('dotenv')
+
+dotenv.load()
+
 // needs firebase function like getCredentials() or environment variables
-var clientSecret = 'lGE5esfXpdB6y7KkVNUezfas'
-var clientId = '704974264220-r3j760e70qgsea3r143apoc4o6nt5ha2.apps.googleusercontent.com'
-var redirectUrl = ['http://localhost:3000/authorisations/gdrive-token']
+var clientSecret = process.env.G_CLIENT_SECRET
+var clientId = process.env.G_CLIENT_ID
+var redirectUrl = process.env.G_REDIRECT_URL
 
 const Extract = {
   getFiles(token) {
@@ -21,9 +25,8 @@ const Extract = {
         return Promise.all(promises)
       }).then(fileContentses => {
         resolve(fileContentses)
-      }).catch(e => {
-        console.log(e)
-        reject(e)
+      }).catch(err => {
+        reject(err)
       })
     })
   },
@@ -46,8 +49,6 @@ function getFileList(auth) {
       fields: 'nextPageToken, files(id, name, mimeType)'
     }, function(err, response) {
       if (err) {
-        console.log('The API returned an error: ' + err)
-        // needs some error trap here for failed access
         reject(err)
       }
       var files = response.files
@@ -65,8 +66,6 @@ function getFileContents(auth, file) {
       mimeType: 'text/plain'
     }, function(err, response) {
       if (err) {
-        console.log('The API returned an error: ' + err)
-        // needs some error trap here for failed access
         reject(err)
       }
       var content = response

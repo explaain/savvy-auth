@@ -8,7 +8,8 @@ dotenv.load()
 // needs firebase function like getCredentials() or environment variables
 var clientSecret = process.env.G_CLIENT_SECRET
 var clientId = process.env.G_CLIENT_ID
-var redirectUrl = process.env.G_REDIRECT_URL
+var baseUrl = process.env.BASE_URL
+var redirectUrl = process.env.G_REDIRECT_URL || baseUrl + '/save/google-drive'
 
 const Extract = {
   getFiles(token) {

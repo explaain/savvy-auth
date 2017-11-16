@@ -1,6 +1,6 @@
 var importer = require('../app/extract/extract.js');
 
-describe('Files from extractor', function() {
+describe('Files via extractor', function() {
 
   it('Retrieve file contents from confluence', function(done) {
     readConfluenceToken()

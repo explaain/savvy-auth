@@ -5,10 +5,16 @@ const Extract = {
     return new Promise(function(resolve, reject) {
       getSiteContent(token)
       .then(data => {
-        var files = data.body.results.map(file => file.body.storage.value)
+        var files = data.body.results.map(file => {
+          return {
+            id: file.id,
+            name: file.title,
+            content: file.body.storage.value,
+            contentFormat: 'html'
+          }
+        })
         return files
       }).then(fileContents => {
-        console.log(fileContents)
         resolve(fileContents)
       }).catch(e => {
         console.log(e)

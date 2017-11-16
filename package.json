@@ -35,7 +35,8 @@
     "jasmine": "^2.8.0",
     "jasmine-spec-reporter": "^4.2.1",
     "mocha": "^4.0.1",
-    "zombie": "^5.0.7"
+    "zombie": "^5.0.7",
+    "zombied-chai": "^1.0.69"
   },
   "dependencies": {
     "body-parser": "^1.18.2",

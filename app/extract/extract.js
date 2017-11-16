@@ -19,7 +19,7 @@ const Extract = {
           reject(e)
         })
       } else {
-        reject(new Error('platform missing'))
+        reject(new Error('unknown platform / missing'))
       }
     })
   }

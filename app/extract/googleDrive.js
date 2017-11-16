@@ -24,8 +24,8 @@ const Extract = {
         const promises = files.filter(file => file.mimeType === 'application/vnd.google-apps.document')
         .map(file => getFileContents(auth, file))
         return Promise.all(promises)
-      }).then(fileContentses => {
-        resolve(fileContentses)
+      }).then(fileContents => {
+        resolve(fileContents)
       }).catch(err => {
         reject(err)
       })
@@ -69,8 +69,9 @@ function getFileContents(auth, file) {
       if (err) {
         reject(err)
       }
-      var content = response
-      resolve(content)
+      file.contentFormat = 'plaintext'
+      file.contents = response
+      resolve(file)
     })
   })
 }

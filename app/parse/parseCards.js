@@ -2,26 +2,63 @@ const axios = require('axios')
 
 const saveFilesUrl = 'https://us-central1-savvy-96d8b.cloudfunctions.net/saveFiles'
 
-function parseCards(organisationID, source, contents) {
+const parseCards = (organisationID, source, contents) => new Promise((resolve, reject) => {
   saveFileHeaders(organisationID, source, contents)
+  var cards = []
   contents.forEach(function(file) {
-    // do something with card contents - parseContent(file.contentFormat, file.contents)
+    cards = cards.concat(parseContent(file.contentFormat, file.content, { id: file.id, name: file.name }))
   })
-}
+  resolve(cards)
+})
 
-function saveFileHeaders(organisationID, source, contents) {
-  var files = contents.map(file => {
+const saveFileHeaders = (organisationID, source, contents) => new Promise((resolve, reject) => {
+  const files = contents.map(file => {
     return {
       id: file.id,
       name: file.name,
       format: file.contentFormat,
-      source: source
+      source: source.name
     }
   })
   axios.post(saveFilesUrl, {
     organisationID: organisationID,
     files: files
+  }).then(res => {
+    resolve(res.data)
+  }).catch(e => {
+    console.log(e)
+    reject(e)
   })
+})
+
+const parseContent = (format, body, meta) => {
+  const cards = []
+  var split = []
+  switch (format) {
+    case 'plain':
+      split = body.split(/(\r\n\r\n\r\n|\n\n\n|\r\r\r)/gm)
+      break
+    case 'html':
+      split = body.match(/<p>.*?<\/p>/g)
+      break
+  }
+  split.forEach(function(chunk) {
+    chunk = chunk.trim()
+    if (chunk.length) {
+      cards.push({
+        content: {
+          description: chunk
+        },
+        extractedFrom: {
+          title: meta.name,
+          id: meta.id
+          // url: meta.webContentLink // Could be webViewLink?
+        }
+      })
+    }
+  })
+  return cards
 }
 
 exports.parseCards = parseCards
+exports.saveFileHeaders = saveFileHeaders

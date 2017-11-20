@@ -3,25 +3,16 @@ var confluence = require('./confluence.js')
 
 const Extract = {
   getFiles(platform, token, queryData) {
-    return new Promise(function(resolve, reject) {
-      if (platform === 'confluence') {
-        confluence.getFiles(token)
-        .then(files => {
-          resolve(files)
-        }).catch(e => {
-          reject(e)
+    switch (platform) {
+      case 'confluence':
+        return confluence.getFiles(token)
+      case 'googleDrive':
+        return googleDrive.getFiles(token)
+      default:
+        return new Promise(function(resolve, reject) {
+          reject(new Error('unknown platform / missing'))
         })
-      } else if (platform === 'googleDrive') {
-        googleDrive.getFiles(token)
-        .then(files => {
-          resolve(files)
-        }).catch(e => {
-          reject(e)
-        })
-      } else {
-        reject(new Error('unknown platform / missing'))
-      }
-    })
+    }
   }
 }
 

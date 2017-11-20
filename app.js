@@ -1,12 +1,15 @@
-var express = require('express')
-var cors = require('cors')
-var http = require('http')
-var bodyParser = require('body-parser')
-var session = require('express-session')
+const express = require('express')
+const cors = require('cors')
+const http = require('http')
+const bodyParser = require('body-parser')
+const session = require('express-session')
+const axios = require('axios')
 
 const cardParser = require('./app/parse/parseCards')
 const importer = require('./app/extract/extract')
 const googleDriveToken = require('./app/auth/googleDriveToken')
+
+const saveSourceUrl = 'https://us-central1-savvy-96d8b.cloudfunctions.net/saveSource'
 
 var app = express()
 
@@ -37,9 +40,16 @@ app.get('/add/confluence', function(req, res) {
 
 app.post('/save/confluence', function(req, res) {
   // save req.body to firebase
+  const source = {
+    organisationID: req.session.organisationID,
+    platform: 'confluence',
+    name: `confluence_${req.session.userID}`,
+    token: req.body
+  }
+  axios.post(saveSourceUrl, source)
   importer.getFiles('confluence', req.body)
   .then(files => {
-    cardParser.parseCards(files)
+    cardParser.parseCards(source.organisationID, source.name, files)
   })
   res.redirect('/return-home')
 })
@@ -57,9 +67,16 @@ app.get('/save/google-drive', function(req, res) {
   googleDriveToken.exchangeToken(code)
   .then(token => {
     // save JSON.parse(token) to firebase
+    const source = {
+      organisationID: req.session.organisationID,
+      platform: 'googleDrive',
+      name: `googleDrive_${req.session.userID}`,
+      token: token
+    }
+    axios.post(saveSourceUrl, source)
     importer.getFiles('googleDrive', JSON.parse(token))
     .then(files => {
-      cardParser.parseCards(files)
+      cardParser.parseCards(source.organisationID, source.name, files)
     })
     res.redirect('/return-home')
   })

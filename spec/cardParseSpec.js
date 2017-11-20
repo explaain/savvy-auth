@@ -35,6 +35,9 @@ describe('Parse cards from content', function() {
     cardParser.parseCards(organisationID, source, content)
     .then(cards => {
       expect(cards.length).toEqual(5)
+      cards.forEach(card => {
+        expect(card.objectID).toBeDefined()
+      })
       done()
     }).catch(e => {
       console.log(e)

@@ -1,6 +1,7 @@
 const axios = require('axios')
 
 const saveFilesUrl = 'https://us-central1-savvy-96d8b.cloudfunctions.net/saveFiles'
+const saveCardUrl = 'https://us-central1-savvy-96d8b.cloudfunctions.net/saveCard'
 
 const parseCards = (organisationID, source, contents) => new Promise((resolve, reject) => {
   saveFileHeaders(organisationID, source, contents)
@@ -8,7 +9,19 @@ const parseCards = (organisationID, source, contents) => new Promise((resolve, r
   contents.forEach(function(file) {
     cards = cards.concat(parseContent(file.contentFormat, file.content, { id: file.id, name: file.name }))
   })
-  resolve(cards)
+  const promises = cards.map(card => axios.post(saveCardUrl, {
+    organisationID: organisationID,
+    userID: 'bob_marley',
+    content: card.content,
+    meta: {
+      extractedFrom: card.extractedFrom
+    }
+  }))
+  Promise.all(promises)
+  .then(results => {
+    const data = results.map(result => result.data)
+    resolve(data)
+  })
 })
 
 const saveFileHeaders = (organisationID, source, contents) => new Promise((resolve, reject) => {
